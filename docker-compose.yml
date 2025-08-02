@@ -1,0 +1,43 @@
+networks:
+    traefik_network:
+        external: true
+
+services:
+    api:
+        container_name: laravel-clean-arch-api
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+            args:
+                BUILD_APP_ENV: "local"
+        image: laravel-clean-arch-api
+        environment:
+            XDG_CONFIG_HOME: "/var/www/html/.tinker"
+        user: $USERID
+        env_file: .env
+        volumes:
+            - .:/var/www/html:cached
+            - ./docker/php/local/opcache.ini:/usr/local/etc/php/conf.d/opcache.ini
+            - ./docker/php/local/php.ini:/usr/local/etc/php/php.ini
+        networks:
+            - traefik_network
+
+    nginx:
+        build:
+            context: .
+            dockerfile: docker/nginx/Dockerfile
+        container_name: laravel-clean-arch-nginx
+        volumes:
+            - .:/var/www/html:cached
+        depends_on:
+            - api
+        networks:
+            - traefik_network
+        entrypoint: sh -c "sed -i 's/api:9000/laravel-clean-arch-api:9000/g' /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.laravel-clean-arch-api.rule=Host(`laravel-clean-arch-api.docker.localhost`)"
+            - "traefik.http.services.laravel-clean-arch-api.loadbalancer.server.port=8080"
+            - "traefik.http.routers.laravel-clean-arch-api.tls=true"
+
+
