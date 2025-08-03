@@ -8,16 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Mapper
 {
-    /**
-     * @param mixed $model
-     * @return mixed
-     */
     abstract public static function from(Model $model): BaseEntity;
-
-    public static function optional(?Model $model = null): ?BaseEntity
-    {
-        return $model ? static::from($model) : null;
-    }
+    abstract public static function optional(?Model $model = null): ?BaseEntity;
 
     public static function collection(iterable $collection): array
     {

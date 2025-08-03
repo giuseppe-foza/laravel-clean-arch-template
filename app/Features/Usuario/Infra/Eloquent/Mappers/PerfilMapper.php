@@ -28,4 +28,11 @@ class PerfilMapper extends Mapper
 
         return Perfil::reconstruct($props, $model->id);
     }
+
+    public static function optional(?Model $model = null): ?Perfil
+    {
+        if (null === $model) return null;
+
+        return self::from($model);
+    }
 }

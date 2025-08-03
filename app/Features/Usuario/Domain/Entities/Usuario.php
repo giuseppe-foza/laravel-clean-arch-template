@@ -27,20 +27,30 @@ final class Usuario extends BaseEntity
         get => $this->props->ativo;
     }
 
-    public bool $emailVerificado {
+    public ?bool $emailVerificado {
         get => $this->props->emailVerificado;
     }
 
-    public string $dataCriacao {
+    public ?string $dataCriacao {
         get => $this->props->dataCriacao;
     }
 
-    public array $perfis {
+    public ?array $perfis {
         get => $this->props->perfis;
     }
 
     public function getSenha(): string {
         return $this->props->senha;
+    }
+
+    public function setNome(string $nome): void
+    {
+        $this->props->nome = $nome;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->props->email = $email;
     }
 
     public static function create(UsuarioProps $props): Usuario {

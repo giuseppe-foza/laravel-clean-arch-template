@@ -27,25 +27,47 @@ readonly class EloquentUsuarioRepository implements UsuarioRepository
 
     public function listarPorId(int $id): ?Usuario
     {
-        $result = $this->model->where($this->model::ID, $id)->first();
+        $result = $this->model->with(['perfis'])->where($this->model::ID, $id)->first();
 
-        return UsuarioMapper::from($result);
+        return UsuarioMapper::optional($result);
     }
 
     public function listarPorEmail(string $email): ?Usuario
     {
         $result = $this->model->where($this->model::EMAIL, $email)->first();
 
-        return UsuarioMapper::from($result);
+        return UsuarioMapper::optional($result);
     }
 
     public function inserir(UsuarioProps $usuarioProps): Usuario
     {
-        // TODO: Implement inserir() method.
+        $dadosCriacao = [
+            EloquentUsuarioModel::NOME => $usuarioProps->nome,
+            EloquentUsuarioModel::EMAIL => $usuarioProps->email,
+            EloquentUsuarioModel::SENHA => $usuarioProps->senha,
+            EloquentUsuarioModel::ATIVO => $usuarioProps->ativo,
+            EloquentUsuarioModel::EMAIL_VERIFICADO => true,
+        ];
+
+        $usuarioInserido = $this->model->create($dadosCriacao);
+
+        return Usuario::reconstruct($usuarioProps, $usuarioInserido->id);
     }
 
     public function atualizar(Usuario $usuario): Usuario
     {
-        // TODO: Implement atualizar() method.
+        $dadosEdicao = [
+            EloquentUsuarioModel::NOME => $usuario->nome,
+            EloquentUsuarioModel::EMAIL => $usuario->email,
+        ];
+
+        $this->model->where(EloquentUsuarioModel::ID, $usuario->id)->update($dadosEdicao);
+
+        return $usuario;
+    }
+
+    public function gerenciarPerfis(int $id, array $perfisId): void
+    {
+        $this->model->find($id)->perfis()->sync($perfisId);
     }
 }

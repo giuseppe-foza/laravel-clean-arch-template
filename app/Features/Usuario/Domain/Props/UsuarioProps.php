@@ -15,8 +15,8 @@ final class UsuarioProps
         public string $email,
         public string $senha,
         public bool $ativo,
-        public ?bool $emailVerificado,
-        public string $dataCriacao,
-        public ?array $perfis,
+        public ?bool $emailVerificado = null,
+        public ?string $dataCriacao = null,
+        public ?array $perfis = null,
     ) {}
 }

@@ -13,4 +13,5 @@ interface UsuarioRepository
     public function listarPorEmail(string $email): ?Usuario;
     public function inserir(UsuarioProps $usuarioProps): Usuario;
     public function atualizar(Usuario $usuario): Usuario;
+    public function gerenciarPerfis(int $usuarioId, array $perfisId): void;
 }

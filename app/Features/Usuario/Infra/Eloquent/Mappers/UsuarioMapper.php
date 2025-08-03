@@ -28,11 +28,18 @@ final class UsuarioMapper extends Mapper
                 email: $model->email,
                 senha: $model->senha,
                 ativo: $model->ativo,
-                emailVerificado: $model->email_verificado,
+                emailVerificado: $model->email_verificado ?? null,
                 dataCriacao: Date::create($model->getRawOriginal($model::DATA_CRIACAO))->toValue(),
                 perfis: $perfis,
             ),
             $model->id
         );
+    }
+
+    public static function optional(?Model $model = null): ?Usuario
+    {
+        if (null === $model) return null;
+
+        return self::from($model);
     }
 }

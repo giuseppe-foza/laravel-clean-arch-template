@@ -2,6 +2,8 @@
 
 namespace App\Features\Base\Infra\Providers;
 
+use App\Features\Base\Application\Contracts\Transaction;
+use App\Features\Base\Infra\Eloquent\Transactions\EloquentTransaction;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -9,19 +11,15 @@ class AppServiceProvider extends ServiceProvider
     public array $bindings = [];
     public array $singletons = [];
 
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            Transaction::class,
+            EloquentTransaction::class,
+        );
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        //
     }
 }
