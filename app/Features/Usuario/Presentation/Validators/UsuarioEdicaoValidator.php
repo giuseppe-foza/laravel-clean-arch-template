@@ -10,10 +10,10 @@ class UsuarioEdicaoValidator extends AppFormRequest
     public function rules(): array
     {
         return [
-            'id'               => ['required', 'integer', 'min:1'],
-            'nome'             => ['required', 'string', 'max:255'],
-            'email'            => ['required', 'email', 'max:255'],
-            'perfilId'         => ['required', 'integer', 'min:1'],
+            'id'       => ['required', 'integer', 'min:1'],
+            'nome'     => ['required', 'string', 'max:255'],
+            'email'    => ['required', 'email', 'max:255'],
+            'perfilId' => ['required', 'integer', 'min:1'],
         ];
     }
 

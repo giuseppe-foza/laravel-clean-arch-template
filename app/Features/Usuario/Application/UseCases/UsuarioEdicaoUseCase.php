@@ -11,10 +11,11 @@ use App\Features\Usuario\Application\Validators\UsuarioValidators;
 use App\Features\Usuario\Domain\Entities\Usuario;
 use App\Features\Usuario\Domain\Repositories\PerfilRepository;
 use App\Features\Usuario\Domain\Repositories\UsuarioRepository;
+use App\Shared\Exceptions\ConflictHttpException;
 use App\Shared\Exceptions\NotFoundHttpException;
 use Symfony\Component\CssSelector\Exception\InternalErrorException;
 
-readonly class UsuarioEdicaoUseCase implements UsuarioEdicaoUseCaseInterface
+final readonly class UsuarioEdicaoUseCase implements UsuarioEdicaoUseCaseInterface
 {
     public function __construct(
         private UsuarioRepository $usuarioRepository,
@@ -28,11 +29,14 @@ readonly class UsuarioEdicaoUseCase implements UsuarioEdicaoUseCaseInterface
     /**
      * @throws NotFoundHttpException
      * @throws InternalErrorException
+     * @throws ConflictHttpException
      */
     public function execute(int $id, UsuarioEdicaoDto $usuarioEdicaoDto): Usuario
     {
         $usuario = UsuarioValidators::usuarioIdExiste($id, $this->usuarioRepository);
         $perfil = PerfilValidators::perfilIdExiste($usuarioEdicaoDto->perfilId, $this->perfilRepository);
+
+        UsuarioValidators::validarEmailUnico($usuarioEdicaoDto->email, $this->usuarioRepository, $id);
 
         $usuario->setNome($usuarioEdicaoDto->nome);
         $usuario->setEmail($usuarioEdicaoDto->email);
@@ -43,6 +47,8 @@ readonly class UsuarioEdicaoUseCase implements UsuarioEdicaoUseCaseInterface
             $usuarioAtualizado = $this->usuarioRepository->atualizar($usuario);
 
             $this->usuarioRepository->gerenciarPerfis($usuario->id, [$perfil->id]);
+
+            $this->transaction->commit();
 
             return $usuarioAtualizado;
         } catch (\Exception $e) {

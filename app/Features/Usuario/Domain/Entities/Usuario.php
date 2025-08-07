@@ -6,6 +6,7 @@ namespace App\Features\Usuario\Domain\Entities;
 use App\Features\Base\Domain\Entities\BaseEntity;
 use App\Features\Base\Domain\ValueObjects\Date;
 use App\Features\Usuario\Domain\Props\UsuarioProps;
+use App\Features\Usuario\Domain\ValueObjects\Senha;
 
 final class Usuario extends BaseEntity
 {
@@ -39,7 +40,7 @@ final class Usuario extends BaseEntity
         get => $this->props->perfis;
     }
 
-    public function getSenha(): string {
+    public function getSenha(): Senha {
         return $this->props->senha;
     }
 
@@ -51,6 +52,16 @@ final class Usuario extends BaseEntity
     public function setEmail(string $email): void
     {
         $this->props->email = $email;
+    }
+
+    public function setSenha(Senha $senha): void
+    {
+        $this->props->senha = $senha;
+    }
+
+    public function setAtivo(bool $ativo): void
+    {
+        $this->props->ativo = $ativo;
     }
 
     public static function create(UsuarioProps $props): Usuario {

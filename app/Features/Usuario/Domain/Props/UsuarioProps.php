@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Features\Usuario\Domain\Props;
 
 use App\Features\Usuario\Domain\Entities\Perfil;
+use App\Features\Usuario\Domain\ValueObjects\Senha;
 
 /**
  * @param Perfil[]|null $perfis
@@ -13,7 +14,7 @@ final class UsuarioProps
     public function __construct(
         public string $nome,
         public string $email,
-        public string $senha,
+        public Senha $senha,
         public bool $ativo,
         public ?bool $emailVerificado = null,
         public ?string $dataCriacao = null,

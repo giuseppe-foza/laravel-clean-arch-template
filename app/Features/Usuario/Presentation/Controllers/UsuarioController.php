@@ -8,8 +8,10 @@ use App\Features\Usuario\Application\Contracts\UsuarioInsercaoUseCaseInterface;
 use App\Features\Usuario\Application\Contracts\UsuarioListagemPorIdUseCaseInterface;
 use App\Features\Usuario\Application\Contracts\UsuarioListagemUseCaseInterface;
 use App\Features\Usuario\Application\Dto\UsuarioEdicaoDto;
+use App\Features\Usuario\Application\Dto\UsuarioFiltrosBuscaDto;
 use App\Features\Usuario\Application\Dto\UsuarioInsercaoDto;
 use App\Features\Usuario\Presentation\Validators\UsuarioEdicaoValidator;
+use App\Features\Usuario\Presentation\Validators\UsuarioFiltrosBuscaValidator;
 use App\Features\Usuario\Presentation\Validators\UsuarioInsercaoValidator;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +27,20 @@ readonly class UsuarioController
     {
     }
 
-    public function listarTodos(): JsonResponse
+    public function listarTodos(
+        UsuarioFiltrosBuscaValidator $request,
+        UsuarioFiltrosBuscaDto $usuarioFiltrosBuscaDto
+    ): JsonResponse
     {
-        $usuarios = $this->usuarioListagemUseCase->execute();
+        $usuarioFiltrosBuscaDto->usuarioFiltrosBusca->setNome($request->input('nome'));
+        $usuarioFiltrosBuscaDto->usuarioFiltrosBusca->setEmail($request->input('email'));
+
+        $usuarioFiltrosBuscaDto->paginacaoOrdenacao->setPagina($request->input('pagina'));
+        $usuarioFiltrosBuscaDto->paginacaoOrdenacao->setPorPagina($request->input('porPagina'));
+        $usuarioFiltrosBuscaDto->paginacaoOrdenacao->setCampoOrdenacao($request->input('campoOrdenacao'));
+        $usuarioFiltrosBuscaDto->paginacaoOrdenacao->setDirecaoOrdenacao($request->input('direcaoOrdenacao'));
+
+        $usuarios = $this->usuarioListagemUseCase->execute($usuarioFiltrosBuscaDto);
 
         return response()->json($usuarios, Response::HTTP_OK);
     }

@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace App\Features\Usuario\Infra\Memory;
 
+use App\Features\Base\Domain\Entities\Paginator;
+use App\Features\Base\Domain\Props\PaginacaoOrdenacao;
 use App\Features\Usuario\Domain\Entities\Usuario;
+use App\Features\Usuario\Domain\Props\UsuarioFiltrosBusca;
 use App\Features\Usuario\Domain\Props\UsuarioProps;
 use App\Features\Usuario\Domain\Repositories\UsuarioRepository;
 
@@ -13,7 +16,10 @@ class MemoryUsuarioRepository implements UsuarioRepository {
         $this->usuarios = [];
     }
 
-    public function listarTodos(): array
+    public function listarTodos(
+        UsuarioFiltrosBusca $usuarioFiltrosBusca,
+        PaginacaoOrdenacao  $paginacaoOrdenacao,
+    ): Paginator
     {
         return $this->usuarios;
     }

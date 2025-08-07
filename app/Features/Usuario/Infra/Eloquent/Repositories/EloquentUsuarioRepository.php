@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace App\Features\Usuario\Infra\Eloquent\Repositories;
 
+use App\Features\Base\Domain\Entities\Paginator;
+use App\Features\Base\Domain\Props\PaginacaoOrdenacao;
+use App\Features\Base\Infra\Eloquent\Mappers\PaginatorMapper;
 use App\Features\Usuario\Domain\Entities\Usuario;
+use App\Features\Usuario\Domain\Props\UsuarioFiltrosBusca;
 use App\Features\Usuario\Domain\Props\UsuarioProps;
 use App\Features\Usuario\Domain\Repositories\UsuarioRepository;
 use App\Features\Usuario\Infra\Eloquent\Mappers\UsuarioMapper;
 use App\Features\Usuario\Infra\Eloquent\Models\EloquentUsuarioModel;
-use Illuminate\Support\Collection;
 
 readonly class EloquentUsuarioRepository implements UsuarioRepository
 {
@@ -18,23 +21,31 @@ readonly class EloquentUsuarioRepository implements UsuarioRepository
     {
     }
 
-    public function listarTodos(): array
+    public function listarTodos(
+        UsuarioFiltrosBusca $usuarioFiltrosBusca,
+        PaginacaoOrdenacao  $paginacaoOrdenacao,
+    ): Paginator
     {
-        $result = $this->model->with(['perfis'])->get();
+        $paginacao = $this->model->query()
+            ->with(['perfis'])
+            ->paginate(
+                perPage: $paginacaoOrdenacao->getPorPagina(),
+                page: $paginacaoOrdenacao->getPagina()
+            );
 
-        return UsuarioMapper::collection($result);
+        return PaginatorMapper::from($paginacao, fn ($model) => UsuarioMapper::from($model));
     }
 
     public function listarPorId(int $id): ?Usuario
     {
-        $result = $this->model->with(['perfis'])->where($this->model::ID, $id)->first();
+        $result = $this->model->query()->with(['perfis'])->where($this->model::ID, $id)->first();
 
         return UsuarioMapper::optional($result);
     }
 
     public function listarPorEmail(string $email): ?Usuario
     {
-        $result = $this->model->where($this->model::EMAIL, $email)->first();
+        $result = $this->model->query()->where($this->model::EMAIL, $email)->first();
 
         return UsuarioMapper::optional($result);
     }
@@ -49,7 +60,7 @@ readonly class EloquentUsuarioRepository implements UsuarioRepository
             EloquentUsuarioModel::EMAIL_VERIFICADO => true,
         ];
 
-        $usuarioInserido = $this->model->create($dadosCriacao);
+        $usuarioInserido = $this->model->query()->create($dadosCriacao);
 
         return Usuario::reconstruct($usuarioProps, $usuarioInserido->id);
     }
@@ -68,6 +79,6 @@ readonly class EloquentUsuarioRepository implements UsuarioRepository
 
     public function gerenciarPerfis(int $id, array $perfisId): void
     {
-        $this->model->find($id)->perfis()->sync($perfisId);
+        $this->model->query()->find($id)->perfis()->sync($perfisId);
     }
 }

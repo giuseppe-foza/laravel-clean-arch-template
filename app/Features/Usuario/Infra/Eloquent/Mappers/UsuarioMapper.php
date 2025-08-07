@@ -7,6 +7,7 @@ use App\Features\Base\Domain\ValueObjects\Date;
 use App\Features\Base\Infra\Eloquent\Mappers\Mapper;
 use App\Features\Usuario\Domain\Entities\Usuario;
 use App\Features\Usuario\Domain\Props\UsuarioProps;
+use App\Features\Usuario\Domain\ValueObjects\Senha;
 use App\Features\Usuario\Infra\Eloquent\Models\EloquentUsuarioModel;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
@@ -26,7 +27,7 @@ final class UsuarioMapper extends Mapper
             new UsuarioProps(
                 nome: $model->nome,
                 email: $model->email,
-                senha: $model->senha,
+                senha: Senha::list($model->senha),
                 ativo: $model->ativo,
                 emailVerificado: $model->email_verificado ?? null,
                 dataCriacao: Date::create($model->getRawOriginal($model::DATA_CRIACAO))->toValue(),

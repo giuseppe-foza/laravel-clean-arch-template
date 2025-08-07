@@ -12,6 +12,7 @@ use App\Features\Usuario\Domain\Entities\Usuario;
 use App\Features\Usuario\Domain\Props\UsuarioProps;
 use App\Features\Usuario\Domain\Repositories\PerfilRepository;
 use App\Features\Usuario\Domain\Repositories\UsuarioRepository;
+use App\Features\Usuario\Domain\ValueObjects\Senha;
 use App\Shared\Exceptions\ConflictHttpException;
 use App\Shared\Exceptions\NotFoundHttpException;
 use App\Shared\Utils\AppHash;
@@ -38,7 +39,7 @@ final readonly class UsuarioInsercaoUseCase implements UsuarioInsercaoUseCaseInt
         UsuarioValidators::validarEmailUnico($usuarioInsercaoDto->email, $this->usuarioRepository);
         $perfil = PerfilValidators::perfilIdExiste($usuarioInsercaoDto->perfilId, $this->perfilRepository);
 
-        $senha = AppHash::make($usuarioInsercaoDto->senha);
+        $senha = Senha::create($usuarioInsercaoDto->senha);
 
         $this->transaction->beginTransaction();
 

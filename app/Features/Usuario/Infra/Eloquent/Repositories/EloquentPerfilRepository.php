@@ -20,14 +20,14 @@ readonly class EloquentPerfilRepository implements PerfilRepository
 
     public function listarPorId(int $id): ?Perfil
     {
-        $result = $this->model->where($this->model::ID, $id)->first();
+        $result = $this->model->query()->where($this->model::ID, $id)->first();
 
         return PerfilMapper::optional($result);
     }
 
     public function listarPorChave(string $chave): ?Perfil
     {
-        $result = $this->model->where($this->model::CHAVE, $chave)->first();
+        $result = $this->model->query()->where($this->model::CHAVE, $chave)->first();
 
         return PerfilMapper::optional($result);
     }

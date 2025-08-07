@@ -3,17 +3,30 @@ declare(strict_types=1);
 
 namespace App\Shared\Utils;
 
-use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
-class AppHash
+final class AppHash
 {
+    private const int COST = 12;
+
+    /**
+     * Gera um hash bcrypt com 12 rounds
+     */
     public static function make(string $payload): string
     {
-        return Hash::make($payload);
+        $hash = password_hash($payload, PASSWORD_BCRYPT, [
+            'cost' => self::COST,
+        ]);
+
+        if (!is_string($hash)) {
+            throw new RuntimeException('Erro ao gerar o hash da senha.');
+        }
+
+        return $hash;
     }
 
     public static function check(string $payload, string $hashed): bool
     {
-        return Hash::check($payload, $hashed);
+        return password_verify($payload, $hashed);
     }
 }

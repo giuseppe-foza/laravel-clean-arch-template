@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AppFormRequest extends FormRequest
 {
-    const string PAGINA              = 'pagina';
-    const string ITENS_POR_PAGINA    = 'itensPorPagina';
-    const string CAMPO_ORDENACAO     = 'campoOrdenacao';
-    const string DIRECAO_ORDENACAO   = 'direcaoOrdenacao';
+    const string PAGINA            = 'pagina';
+    const string POR_PAGINA        = 'porPagina';
+    const string CAMPO_ORDENACAO   = 'campoOrdenacao';
+    const string DIRECAO_ORDENACAO = 'direcaoOrdenacao';
 
     public array $sorting = [];
 
@@ -56,8 +56,8 @@ abstract class AppFormRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
-            self::PAGINA           => $this->input(self::PAGINA, 1),
-            self::ITENS_POR_PAGINA => $this->input(self::ITENS_POR_PAGINA, 15),
+            self::PAGINA     => $this->input(self::PAGINA, 1),
+            self::POR_PAGINA => $this->input(self::POR_PAGINA, 50),
         ]);
     }
 
@@ -70,7 +70,7 @@ abstract class AppFormRequest extends FormRequest
 
         $paginationOrderRules = [
             self::PAGINA              => $paginationRules,
-            self::ITENS_POR_PAGINA    => $paginationRules,
+            self::POR_PAGINA          => $paginationRules,
             self::DIRECAO_ORDENACAO   => $direcaoRules,
             self::CAMPO_ORDENACAO     => $this->getColumnsNameRules(),
         ];
@@ -82,7 +82,7 @@ abstract class AppFormRequest extends FormRequest
     {
         $paginationOrderAttributes = [
             self::PAGINA              => 'Página',
-            self::ITENS_POR_PAGINA    => 'Itens por página',
+            self::POR_PAGINA          => 'Itens por página',
             self::CAMPO_ORDENACAO     => 'Campo de ordenação',
             self::DIRECAO_ORDENACAO   => 'Direção da ordenação',
         ];
